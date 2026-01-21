@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const sort = searchParams.get("sort") || "created_at:desc";
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_DASHBOARD_SITE_URL}/api/perviews/products?events=${eventId}&sort=${sort}`,
+      `https://dev-icnhub.vercel.app/api/perviews/products?events=${eventId}&sort=${sort}`,
       {
         method: "GET",
         headers: {
@@ -16,12 +16,15 @@ export async function GET(request: NextRequest) {
         },
       }
     );
-    
+
     if (!response.ok) {
       throw new Error(`External API error: ${response?.status}`);
     }
-    
+
     const data = await response.json();
+    console.log(
+      `https://dev-icnhub.vercel.app/api/perviews/products?events=${eventId}&sort=${sort}`
+    );
     console.log(data);
 
     return NextResponse.json(data, {
