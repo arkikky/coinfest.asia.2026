@@ -16,12 +16,13 @@ export async function GET(request: NextRequest) {
         },
       }
     );
-
+    
     if (!response.ok) {
       throw new Error(`External API error: ${response?.status}`);
     }
-
+    
     const data = await response.json();
+    console.log(data);
 
     return NextResponse.json(data, {
       status: 200,
