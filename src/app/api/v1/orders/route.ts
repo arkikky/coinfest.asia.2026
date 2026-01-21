@@ -80,9 +80,17 @@ export async function POST(request: NextRequest) {
 
 // @get(order by id_orders)
 export async function GET(request: NextRequest) {
+  // #region agent log
+  fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/orders/route.ts:82',message:'GET orders entry',data:{url:request.url},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+  // #endregion
+
   try {
     const { searchParams } = new URL(request.url);
     const idOrders = searchParams.get("id_orders");
+
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/orders/route.ts:88',message:'parsed searchParams',data:{idOrders:!!idOrders,idOrdersLength:idOrders?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
 
     if (!idOrders) {
       return NextResponse.json(
@@ -91,13 +99,36 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/orders/route.ts:96',message:'before createClient',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
+
+    let supabase;
+    try {
+      supabase = await createClient();
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/orders/route.ts:100',message:'createClient success',data:{hasClient:!!supabase},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+    } catch (clientError: any) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/orders/route.ts:104',message:'createClient error',data:{error:clientError?.message,errorName:clientError?.name,stack:clientError?.stack?.substring(0,300)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+      throw clientError;
+    }
+
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/orders/route.ts:110',message:'before supabase query',data:{idOrders},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
 
     const { data, error } = await supabase
       .from("orders")
       .select("*")
       .eq("id_orders", idOrders)
       .single();
+
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/orders/route.ts:118',message:'after supabase query',data:{hasData:!!data,hasError:!!error,errorCode:error?.code,errorMessage:error?.message,errorDetails:error?.details},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
 
     if (error) {
       console.error("Supabase error:", error);
@@ -107,11 +138,18 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/orders/route.ts:128',message:'GET orders success',data:{hasData:!!data,orderId:data?.id_orders},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
+
     return NextResponse.json({
       data,
       message: "Order fetched successfully",
     });
-  } catch (error) {
+  } catch (error: any) {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/orders/route.ts:137',message:'GET orders catch error',data:{error:error?.message,errorName:error?.name,stack:error?.stack?.substring(0,400)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
     console.error("Error fetching order:", error);
     return NextResponse.json(
       { error: "Failed to fetch order" },
