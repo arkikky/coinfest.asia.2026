@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle2, ArrowLeft, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ interface CouponData {
   discount_amount?: number;
 }
 
-export default function OrderReceived() {
+function OrderReceivedContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get("process");
@@ -388,5 +388,21 @@ export default function OrderReceived() {
         </div>
       </div>
     </Container>
+  );
+}
+
+export default function OrderReceived() {
+  return (
+    <Suspense
+      fallback={
+        <Container>
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="text-lg text-gray-600">Loading order details...</div>
+          </div>
+        </Container>
+      }
+    >
+      <OrderReceivedContent />
+    </Suspense>
   );
 }
