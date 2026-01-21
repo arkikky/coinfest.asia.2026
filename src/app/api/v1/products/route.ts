@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const sort = searchParams.get("sort") || "created_at:desc";
 
     const response = await fetch(
-      `http://localhost:3085/api/perviews/products?events=${eventId}&sort=${sort}`,
+      `${process.env.NEXT_PUBLIC_DASHBOARD_SITE_URL}/api/perviews/products?events=${eventId}&sort=${sort}`,
       {
         method: "GET",
         headers: {
