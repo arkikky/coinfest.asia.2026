@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
           warning: "Email configuration is missing but order was processed",
           error: "SMTP_EMAIL configuration not found",
         },
-        { status: 200 } // Return 200 so payment doesn't fail
+        { status: 200 } 
       );
     }
 

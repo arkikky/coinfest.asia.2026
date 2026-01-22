@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
         surname: fullname,
         email: payerEmail,
       },
-      callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payments/webhook/invoice`,
+      callback_url: `https://dev-icnhub.vercel.app/api/payments/webhook/invoice`,
       success_redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/order-received?process=${order}`,
       failure_redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/order-failed?process=${order}`,
       currency: "IDR",
