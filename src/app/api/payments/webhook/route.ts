@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// @notification(Log Error)
-const logErr = [
-  {
-    error: {
-      status: 405,
-      name: "ForbiddenError",
-      message: "Forbidden",
+  // @notification(Log Error)
+  const logErr = [
+    {
+      error: {
+        status: 405,
+        name: "ForbiddenError",
+        message: "Forbidden",
+      },
     },
-  },
-];
+  ];
 
 export async function POST(request: NextRequest) {
   const headersApiKey = request.headers.get("x-api-key");
-  
   if (
     !headersApiKey ||
     headersApiKey !== process.env.SECRET_TOKEN_ENCRYPT
@@ -24,7 +23,6 @@ export async function POST(request: NextRequest) {
   // @data(body)
   const body = await request.json();
   const { paymentId } = body;
-  
   if (!paymentId) {
     return NextResponse.json(logErr, { status: 400 });
   }

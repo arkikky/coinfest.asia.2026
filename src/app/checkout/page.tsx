@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 import Container from "@/components/Customs/Container";
 import PerviewCheckouts from "@/layouts/Store/PerviewCheckouts";
+import Footer from "@/layouts/Footers";
 
 export default function Checkout() {
   return (
@@ -13,8 +14,9 @@ export default function Checkout() {
           </div>
         }
       >
-        <Container>
+        <Container className={"px-4 sm:px-20 xl:px-40 py-20"}>
           <PerviewCheckouts />
+          <Footer />
         </Container>
       </Suspense>
     </>

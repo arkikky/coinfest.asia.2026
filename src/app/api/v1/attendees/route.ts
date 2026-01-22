@@ -25,7 +25,7 @@ type RawAttendee = {
   company_size?: string;
   company_website?: string;
   custom_questions?: { question?: string; answer?: string }[];
-  social_accounts?: { socialmedia?: string; url?: string }[];
+  social_accounts?: { socialmedia?: string; accounts?: string }[];
   id_order_items?: string | number | null;
 };
 
@@ -38,8 +38,7 @@ export async function POST(request: NextRequest) {
       : body?.first_name || body?.email
       ? [body as RawAttendee]
       : [];
-
-    if (!rawAttendees.length) {
+    if (!rawAttendees?.length) {
       return NextResponse.json(
         { error: "No attendee data provided" },
         { status: 400 }
@@ -93,9 +92,9 @@ export async function POST(request: NextRequest) {
         ? att.social_accounts
             .map((s) => ({
               socialmedia: (s?.socialmedia || "").trim(),
-              url: (s?.url || "").trim(),
+              accounts: (s?.accounts || "").trim(),
             }))
-            .filter((s) => s.socialmedia || s.url)
+            .filter((s) => s.socialmedia || s.accounts)
         : null,
       id_order_items:
         att?.id_order_items !== undefined && att?.id_order_items !== null
@@ -151,37 +150,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/attendees/route.ts:154',message:'before createClient',data:{orderId,attendeesCount:resolvedAttendees.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-    // #endregion
-
-    let supabase;
-    try {
-      supabase = await createClient();
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/attendees/route.ts:159',message:'createClient success',data:{hasClient:!!supabase},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
-    } catch (clientError: any) {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/attendees/route.ts:163',message:'createClient error',data:{error:clientError?.message,errorName:clientError?.name,stack:clientError?.stack?.substring(0,300)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
-      throw clientError;
-    }
+    const supabase = await createClient();
 
     // @fetch(order to get event and creator info)
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/attendees/route.ts:171',message:'before fetch order',data:{orderId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
-
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .select("id_orders, id_events, created_by, updated_by")
       .eq("id_orders", orderId)
       .single();
-
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/attendees/route.ts:179',message:'after fetch order',data:{hasOrder:!!order,hasError:!!orderError,errorCode:orderError?.code,errorMessage:orderError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
 
     if (orderError || !order) {
       console.error("Failed to fetch order for attendee:", orderError);
@@ -226,19 +202,11 @@ export async function POST(request: NextRequest) {
         record_status: "published" as const,
       };
 
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/attendees/route.ts:210',message:'before create customer',data:{billingName,billingEmail:!!firstAttendee?.email},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
-
       const { data: customer, error: customerError } = await supabase
         .from("customers")
         .insert(customerPayload)
         .select("id_customers")
         .single();
-
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7caf6fda-8a89-4f11-a97e-afa0aff5703e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/v1/attendees/route.ts:218',message:'after create customer',data:{hasCustomer:!!customer,hasError:!!customerError,errorCode:customerError?.code,errorMessage:customerError?.message,errorDetails:customerError?.details},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
 
       if (customerError || !customer) {
         console.error("Failed to create customer:", customerError);

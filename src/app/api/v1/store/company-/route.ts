@@ -9,9 +9,6 @@ export async function GET() {
       "job_title_position",
       FALLBACK_OPTIONS
     );
-
-    console.log(options);
-
     const response: FormOptionsResponse = {
       options,
       source: options === FALLBACK_OPTIONS ? "fallback" : "data",

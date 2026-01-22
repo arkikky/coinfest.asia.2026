@@ -28,24 +28,24 @@ export const SingleAttendeeSchema = z
       .array(
         z.object({
           socialmedia: z.string().min(1, "Social media account is required!"),
-          url: z.string().min(1, "Social media account is required!"),
+          accounts: z.string().optional().or(z.literal("")),
         })
       )
       .superRefine((items, ctx) => {
         items.forEach((item, idx) => {
-          if (!item?.url || item?.url?.trim()?.length === 0) {
+          if (!item?.accounts || item?.accounts?.trim()?.length === 0) {
             const label =
               (item?.socialmedia || "").replace(/\?/g, "").trim() ||
               "this question";
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              path: [idx, "url"],
-              message: `${label} is required!`,
+              path: [idx, "accounts"],
+              message: `Social media ${label} is required!`,
             });
           } else if (
-            item?.url &&
-            !/^(https?:\/\/)[\w.-]+\.[A-Za-z]{2,}(\/.*)?$/.test(
-              item.url.trim()
+            item?.accounts &&
+            !/^[A-Za-z\s_]+$/.test(
+              item.accounts.trim()
             )
           ) {
             const label =
@@ -53,8 +53,8 @@ export const SingleAttendeeSchema = z
               "this question";
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              path: [idx, "url"],
-              message: `${label} must be a valid url (https://...)`,
+              path: [idx, "accounts"],
+              message: `${label} must contain only letters and spaces!`,
             });
           }
         });
@@ -176,7 +176,7 @@ export const SingleAttendeeSchema = z
       );
     },
     {
-      message: "Company website must be a valid url (https://...)",
+      message: "Company website must be a valid website url (https://...)",
       path: ["company_website"],
     }
   )

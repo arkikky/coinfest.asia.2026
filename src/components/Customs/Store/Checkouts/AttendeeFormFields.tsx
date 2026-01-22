@@ -197,7 +197,7 @@ export default function AttendeeFormFields({
                 className="text-xs h-auto w-auto py-1.5 px-2.5 font-medium gap-x-1 leading-[initial]"
                 type="button"
                 size="sm"
-                variant="primary"
+                variant="secondary"
                 onClick={(e) => {
                   e.preventDefault();
                   const current = field?.value || [];
@@ -206,7 +206,7 @@ export default function AttendeeFormFields({
                     ...current,
                     {
                       socialmedia: "telegram",
-                      url: "" as string,
+                      accounts: "" as string,
                     },
                   ]);
                 }}
@@ -215,7 +215,7 @@ export default function AttendeeFormFields({
                 {`Add Links`}
               </Button>
             </div>
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-5">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-4">
               {(field?.value || [])?.map((account, accountIndex) => {
                 const accounts =
                   field?.value?.length && field?.value.length > 0
@@ -229,22 +229,22 @@ export default function AttendeeFormFields({
                     <FormField
                       control={control}
                       name={`attendees.${index}.social_accounts.${accountIndex}.socialmedia`}
-                      render={({ field: typeField }) => (
+                      render={({ field: socialmediaField }) => (
                         <FormItem className="flex-1 absolute left-1 top-1">
                           <FormControl>
                             <Select
                               value={
-                                typeField.value ??
+                                socialmediaField.value ??
                                 account?.socialmedia ??
                                 "telegram"
                               }
                               onValueChange={(value) => {
-                                typeField.onChange(value);
+                                socialmediaField.onChange(value);
                                 const updated = [...accounts];
                                 updated[accountIndex] = {
                                   ...account,
                                   socialmedia: value,
-                                  url: account?.url || "",
+                                  accounts: account?.accounts || "",
                                 };
                                 field.onChange(updated);
                               }}
@@ -295,20 +295,20 @@ export default function AttendeeFormFields({
                     />
                     <FormField
                       control={control}
-                      name={`attendees.${index}.social_accounts.${accountIndex}.url`}
-                      render={({ field: urlField }) => (
+                      name={`attendees.${index}.social_accounts.${accountIndex}.accounts`}
+                      render={({ field: accountsField }) => (
                         <FormItem className="flex-2">
                           <FormControl>
                             <Input
                               className="h-12 pl-20 w-full rounded-lg"
-                              placeholder="Enter social media account url"
-                              value={urlField.value ?? account.url}
+                              placeholder="Enter social media accounts"
+                              value={accountsField.value ?? account?.accounts}
                               onChange={(e) => {
-                                urlField.onChange(e.target.value);
+                                accountsField.onChange(e.target.value);
                                 const updated = [...accounts];
                                 updated[accountIndex] = {
                                   socialmedia: account?.socialmedia,
-                                  url: e.target.value || "",
+                                  accounts: e.target.value || "",
                                 };
                                 field.onChange(updated);
                               }}
@@ -442,7 +442,7 @@ export default function AttendeeFormFields({
           <FormItem className="col-span-full flex flex-row items-center justify-between space-x-3">
             <FormLabel className="leading-[initial]">
               <span className="flex flex-col items-start justify-start space-y-1">
-                <span>{`Are you working with a company/organization?`}</span>
+                <span>{`Are you working with a company?`}</span>
                 <span className="font-normal text-muted-foreground">
                   {`Use the company details that correspond with the attendee!`}
                 </span>

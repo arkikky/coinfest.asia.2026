@@ -8,12 +8,7 @@ import { useOrderStore } from "@/stores/OrderStore";
 import AttendeeTabs from "@/components/Customs/Store/Checkouts/AttendeeTabs";
 import AttendeeCards from "@/components/Customs/Store/Checkouts/AttendeeCards";
 import AgreementSubmit from "@/components/Customs/Store/Checkouts/AgreementSubmit";
-import {
-  getOrderId,
-  clearOrderItemIds,
-  clearOrderId,
-  clearGuestSessionId,
-} from "@/lib/cookies";
+import { getOrderId } from "@/lib/cookies";
 
 // @schema(attendee form)
 import {
@@ -111,7 +106,7 @@ export default function PerviewCheckouts({
   // @agreed
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  // @tabs(state) - Track active tab per group
+  // @tabs(state track active)
   const [activeTabPerGroup, setActiveTabPerGroup] = useState<
     Record<string, number>
   >({});
@@ -153,7 +148,6 @@ export default function PerviewCheckouts({
       replace([]);
       return;
     }
-
     const current = getValues("attendees") || [];
     const next = Array?.from({ length: totalSlots }, (_, idx) => {
       return current[idx] || { ...emptyAttendee };
@@ -196,7 +190,7 @@ export default function PerviewCheckouts({
           };
         })
         .filter(Boolean) || [];
-    if (!payload.length) {
+    if (!payload?.length) {
       console.error("No attendee data to submit");
       return;
     }
@@ -284,17 +278,10 @@ export default function PerviewCheckouts({
         });
         reset();
 
-        // @clear(cookies)
-        clearOrderItemIds();
-        clearOrderId();
-        clearGuestSessionId();
-
         // @redirect(based on payment type)
         if (invoiceUrl) {
-          // Paid order - redirect to invoice
           router.replace(invoiceUrl);
         } else {
-          // Free order - redirect to order received
           router.replace(`/checkout/order-received?process=${orderId}`);
         }
       } catch (paymentError) {
@@ -321,7 +308,7 @@ export default function PerviewCheckouts({
   // @helper(check errors for tab)
   const hasAttendeeErrors = (globalIndex: number): boolean => {
     if (!errors?.attendees) return false;
-    return !!errors.attendees[globalIndex];
+    return !!errors?.attendees[globalIndex];
   };
 
   return (
@@ -403,13 +390,9 @@ export default function PerviewCheckouts({
                           : { backgroundColor: "bg-primary" }
                       }
                     >
-                      <p className="text-lg font-semibold leading-[initial] text-center text-white">
+                      <p className="text-base sm:text-lg font-semibold leading-[initial] text-center text-white">
                         {group?.label}
                       </p>
-                      {/* <p className="text-xs text-gray-500">
-                        {group?.count} attendee{group?.count > 1 ? "s" : ""}{" "}
-                        required
-                      </p> */}
 
                       {/* @tabs(attendee) */}
                       <AttendeeTabs
@@ -430,7 +413,6 @@ export default function PerviewCheckouts({
 
                       // @only(active tab's)
                       if (localIndex !== activeTab) return null;
-
                       return (
                         <AttendeeCards
                           key={field?.id}
@@ -441,6 +423,9 @@ export default function PerviewCheckouts({
                           watch={watch}
                           setValue={setValue}
                           onCopyAttendee={handleCopyAttendee}
+                          controlTabsCount={group?.count}
+                          controlTabsActiveTab={activeTab}
+                          onControlTabsChange={setActiveTab}
                         />
                       );
                     })}

@@ -1,10 +1,15 @@
 "use client";
-import { useEffect, useState, useRef, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle2, ArrowLeft, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Container from "@/components/Customs/Container";
+import {
+  clearOrderItemIds,
+  clearOrderId,
+  clearGuestSessionId,
+} from "@/lib/cookies";
 
 interface OrderData {
   id_orders: string;
@@ -52,7 +57,6 @@ function OrderReceivedContent() {
   const [coupon, setCoupon] = useState<CouponData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const emailSentRef = useRef(false);
 
   useEffect(() => {
     if (!orderId) {
@@ -146,6 +150,11 @@ function OrderReceivedContent() {
           }
         }
 
+        // @clear(cookies after order data is successfully loaded)
+        clearOrderItemIds();
+        clearOrderId();
+        clearGuestSessionId();
+
       } catch (err) {
         console.error("Error fetching order data:", err);
         setError("Failed to load order details");
@@ -156,43 +165,6 @@ function OrderReceivedContent() {
 
     fetchOrderData();
   }, [orderId]);
-
-  // @send(email notification after order and customer data are loaded)
-  useEffect(() => {
-    if (!order || !customer || loading || emailSentRef.current) return;
-
-    const sendEmail = async () => {
-      emailSentRef.current = true; // Prevent multiple sends
-      const isFree = (order.grand_order_total || 0) <= 0;
-      try {
-        const emailResponse = await fetch("/api/emails/order-confirmation", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            orderId: order.id_orders,
-            email: customer.billing_email,
-            fullname: customer.billing_name,
-            amount: order.grand_order_total || 0,
-            isFree: isFree,
-            sentAt: new Date().toISOString(),
-          }),
-        });
-
-        if (!emailResponse.ok) {
-          console.error("Failed to send order confirmation email");
-          emailSentRef.current = false; // Allow retry on failure
-        }
-      } catch (emailError) {
-        console.error("Error sending order confirmation email:", emailError);
-        emailSentRef.current = false; // Allow retry on failure
-        // Don't throw - email failure shouldn't stop the page from loading
-      }
-    };
-
-    sendEmail();
-  }, [order, customer, loading]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
@@ -214,6 +186,7 @@ function OrderReceivedContent() {
     }).format(amount);
   };
 
+  // @loading(order details)
   if (loading) {
     return (
       <Container>
@@ -224,6 +197,7 @@ function OrderReceivedContent() {
     );
   }
 
+  // @error(order details)
   if (error || !order) {
     return (
       <Container>
@@ -240,9 +214,9 @@ function OrderReceivedContent() {
     );
   }
 
-  const transactionDate = formatDate(order.paid_at || order.created_at);
-  const totalAmount = order.grand_order_total || 0;
-  const discountAmount = order.discount_amount || 0;
+  const transactionDate = formatDate(order?.paid_at || order?.created_at);
+  const totalAmount = order?.grand_order_total || 0;
+  const discountAmount = order?.discount_amount || 0;
 
   return (
     <Container>
@@ -367,7 +341,7 @@ function OrderReceivedContent() {
                       Discount Coupon
                     </span>
                     <span className="text-lg font-semibold text-white">
-                      {coupon.coupon_code_name} -{" "}
+                      {coupon?.coupon_code_name} -{" "}
                       {formatCurrency(discountAmount)}
                     </span>
                   </div>

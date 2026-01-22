@@ -1,5 +1,3 @@
-// @/app/api/emails/order-confirmation/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { render } from "@react-email/render";
@@ -94,7 +92,10 @@ export async function POST(request: NextRequest) {
       text: emailText,
     });
 
-    console.log("Email sent successfully:", info.messageId);
+    // @log(email sent successfully)
+    {process.env.NODE_ENV === "development" && (
+      console.log("Email sent successfully:", info?.messageId)
+    )}
 
     return NextResponse.json(
       {
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
         warning: "Email processing error but order was processed",
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 200 } // Return 200 so payment doesn't fail
+      { status: 200 } 
     );
   }
 }

@@ -15,7 +15,6 @@ const logErr = [
 export async function POST(request: NextRequest) {
   const body = await request.json();
   const { extrnlId, amount, payerEmail, fullname, order } = body;
-
   if (!extrnlId || !amount || !payerEmail || !fullname || !order) {
     return NextResponse.json(logErr, { status: 400 });
   }
@@ -36,7 +35,11 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-    console.log("Order data:", order_checkout);
+
+    // @log(order data)
+    {process.env.NODE_ENV === "development" && (
+      console.log("Order data:", order_checkout)
+    )}
 
     // @fetch(order items with products)
     const { data: orderItems, error: orderItemsError } = await supabase
@@ -44,7 +47,6 @@ export async function POST(request: NextRequest) {
       .select("*")
       .eq("id_orders", order)
       .eq("record_status", "published");
-
     if (orderItemsError) {
       console.error("Failed to fetch order items:", orderItemsError);
     }
@@ -77,24 +79,33 @@ export async function POST(request: NextRequest) {
         }
       }
     }
-    console.log(orderItemsWithProducts);
 
+    // @log(order items with products)
+    {process.env.NODE_ENV === "development" && (
+      console.log("Order items with products:", orderItemsWithProducts)
+    )}
+
+    // @create(basic auth)
     const basicAuth = Buffer.from(
       process.env.NEXT_PUBLIC_XENDIT_TOKEN || ""
     ).toString("base64");
-    console.log(basicAuth);
+
+    // @log(basic auth)
+    {process.env.NODE_ENV === "development" && (
+      console.log("Basic auth:", basicAuth)
+    )}
 
     const Invoice = {
       external_id: `${extrnlId}`,
       amount: amount,
       payer_email: payerEmail,
-      description: `Payment for Order #${order_checkout?.order_id} at Tickets Coinfest Asia 2026`,
+      description: `Payment for order (#${order_checkout?.order_id}) at Tickets Coinfest Asia 2026`,
       customer: {
         given_names: fullname,
         surname: fullname,
         email: payerEmail,
       },
-      callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payment/webhook-callback`,
+      callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payments/webhook/invoice`,
       success_redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/order-received?process=${order}`,
       failure_redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/order-failed?process=${order}`,
       currency: "IDR",

@@ -37,17 +37,17 @@ export default function AttendeeTabs({
               });
             }}
             className={cn(
-              "relative shrink-0 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
+              "relative shrink-0 px-2.5 sm:px-3 py-1.5 sm:py-1.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer",
               "focus:outline-none border-2 bg-white/20 border-white text-white",
-              isActive ? " opacity-100" : "opacity-50",
-              hasError && isActive && "bg-red-500/20 border-red-500",
-              hasError && !isActive && "bg-red-500/20 border-red-500"
+              isActive ? " opacity-100" : "opacity-40",
+              hasError && isActive && "bg-red-500/20 border-red-600",
+              hasError && !isActive && "bg-red-500/20 border-red-600"
             )}
           >
             <span className="flex items-center gap-2">
               <span className="leading-[initial]">Attendee {idx + 1}</span>
               {hasError && (
-                <CircleAlertIcon className={cn("size-4 text-red-500")} />
+                <CircleAlertIcon className={cn("size-3.5 sm:size-4 text-red-500")} />
               )}
             </span>
           </button>

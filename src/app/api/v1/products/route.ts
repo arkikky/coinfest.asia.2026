@@ -16,16 +16,11 @@ export async function GET(request: NextRequest) {
         },
       }
     );
-
+    console.log(`https://dev-icnhub.vercel.app/api/perviews/products?events=${eventId}&sort=${sort}`);
     if (!response.ok) {
       throw new Error(`External API error: ${response?.status}`);
     }
-
     const data = await response.json();
-    console.log(
-      `https://dev-icnhub.vercel.app/api/perviews/products?events=${eventId}&sort=${sort}`
-    );
-    console.log(data);
 
     return NextResponse.json(data, {
       status: 200,

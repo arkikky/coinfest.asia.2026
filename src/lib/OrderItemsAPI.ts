@@ -25,11 +25,13 @@ export async function fetchOrderItems(
   const params = new URLSearchParams();
   if (guestSessionId) params.append("guest_sessions", guestSessionId);
   if (idOrders) params.append("id_orders", idOrders);
-  console.log(params?.toString());
-  console.log(idOrders);
+
+  // @log(params)
+  {process.env.NODE_ENV === "development" && (
+    console.log("Params:", params?.toString())
+  )}
 
   const response = await fetch(`/api/v1/order-items?${params?.toString()}`);
-
   if (!response.ok) {
     throw new Error(`Failed to fetch order items: ${response.status}`);
   }
