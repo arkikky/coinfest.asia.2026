@@ -355,7 +355,7 @@ export default function AttendeeFormFields({
             <FormLabel>{DEFAULT_CUSTOM_QUESTIONS[0]}</FormLabel>
             <Select
               onValueChange={field.onChange}
-              defaultValue={field.value}
+              value={field.value || ""}
               disabled={isSubmitting}
             >
               <FormControl>
@@ -398,7 +398,7 @@ export default function AttendeeFormFields({
             <FormLabel>{DEFAULT_CUSTOM_QUESTIONS[1]}</FormLabel>
             <Select
               onValueChange={field.onChange}
-              defaultValue={field.value}
+              value={field.value || ""}
               disabled={isSubmitting}
             >
               <FormControl>
@@ -433,7 +433,6 @@ export default function AttendeeFormFields({
           </FormItem>
         )}
       />
-
       {/* @field(is_working_with_company) */}
       <FormField
         control={control}
@@ -493,7 +492,6 @@ export default function AttendeeFormFields({
           </FormItem>
         )}
       />
-
       {/* @field(company_name) */}
       <FormField
         control={control}
@@ -745,7 +743,7 @@ export default function AttendeeFormFields({
                 <FormLabel>{`Company Size`}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value || ""}
                   disabled={isSubmitting}
                 >
                   <FormControl>

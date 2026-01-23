@@ -98,6 +98,7 @@ export default function PerviewCheckouts({
     formState: { errors, isSubmitting },
     setValue,
     reset,
+    trigger,
   } = form;
   const { fields, replace } = useFieldArray({
     control,
@@ -120,27 +121,32 @@ export default function PerviewCheckouts({
     COPYABLE_ATTENDEE_FIELDS.forEach((key) => {
       setValue(`attendees.${index}.${key}`, source?.[key] ?? "", {
         shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
       });
     });
     setValue(
       `attendees.${index}.is_working_with_company`,
       source?.is_working_with_company ?? false,
-      { shouldValidate: true }
+      { shouldValidate: true, shouldDirty: true, shouldTouch: true }
     );
     setValue(
       `attendees.${index}.custom_questions`,
       source?.custom_questions?.length
         ? source?.custom_questions
         : emptyAttendee?.custom_questions,
-      { shouldValidate: true }
+      { shouldValidate: true, shouldDirty: true, shouldTouch: true }
     );
     setValue(
       `attendees.${index}.social_accounts`,
       source?.social_accounts?.length
         ? source?.social_accounts
         : emptyAttendee?.social_accounts,
-      { shouldValidate: true }
+      { shouldValidate: true, shouldDirty: true, shouldTouch: true }
     );
+    
+    // Trigger validation and re-render for the copied attendee
+    trigger(`attendees.${index}`);
   };
 
   useEffect(() => {

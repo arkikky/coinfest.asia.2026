@@ -1,0 +1,80 @@
+# @ ignore node modules
+node_modules/
+
+# @ ignore build outputs
+.next/
+.next/cache/
+dist/
+build/
+out/
+
+# @ ignore turbopack cache
+.turbo/
+.next/turbo/
+
+# @ ignore env files
+.env
+.env.*
+!.env.example
+
+# @ ignore system files
+.DS_Store
+Thumbs.db
+
+# @ ignore ide/editor configs
+.vscode/
+.idea/
+*.swp
+
+# @ ignore log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# @ ignore lockfiles so cursor no need to scan
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+
+# @ ignore type checking cache
+*.tsbuildinfo
+
+# @ ignore public assets heavy folders
+public/uploads/
+public/images/raw/
+public/storage/
+public/tmp/
+
+# @ ignore static export assets
+public/**/*.map
+
+# @ ignore prisma & database files
+prisma/migrations/
+prisma/*.db
+*.sqlite
+*.db
+
+# @ ignore tests coverage
+coverage/
+coverage/**/*
+
+# @ ignore next-auth session storage (if using file adapter)
+sessions/
+# auth/
+
+# @ ignore generated shadcn ui build artifacts
+src/components/ui/**/*.mjs
+src/components/ui/**/*.js.map
+
+# @ ignore storybook or design system (if exists)
+.storybook/
+stories/
+
+# @ ignore docs/tools artifacts
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+
+# @ ignore tailwind jit temporary files
+*.temp.css

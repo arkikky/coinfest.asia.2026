@@ -5,6 +5,7 @@ import { CheckCircle2, ArrowLeft, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Container from "@/components/Customs/Container";
+import Footer from "@/layouts/Footers";
 import {
   clearOrderItemIds,
   clearOrderId,
@@ -220,7 +221,7 @@ function OrderReceivedContent() {
 
   return (
     <Container>
-      <div className="min-h-screen py-12 px-4">
+      <div className="py-10 px-4">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* @left(side - success message) */}
           <div className="flex flex-col items-start justify-start gap-6">
@@ -377,6 +378,7 @@ export default function OrderReceived() {
       }
     >
       <OrderReceivedContent />
+      <Footer/>
     </Suspense>
   );
 }
